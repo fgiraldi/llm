@@ -1,0 +1,8 @@
+beautifulsoup4
+faiss-cpu
+langchain
+langchain-community
+langchain-openai
+langgraph
+openai
+transformers

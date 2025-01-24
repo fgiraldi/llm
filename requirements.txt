@@ -1,8 +1,10 @@
 beautifulsoup4
+datasets
 faiss-cpu
 langchain
 langchain-community
 langchain-openai
 langgraph
 openai
+torch
 transformers

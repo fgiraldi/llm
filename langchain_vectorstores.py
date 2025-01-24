@@ -1,8 +1,5 @@
 import config
-from dotenv import load_dotenv
-
 from langchain_community.document_loaders import WebBaseLoader
-from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import MessagesPlaceholder
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
@@ -14,7 +11,6 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 
 
-load_dotenv()
 api_key = config.api_key
 
 

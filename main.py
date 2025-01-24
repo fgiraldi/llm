@@ -54,7 +54,7 @@ def text_summarizer(prompt):
 def main():
     # generated_text = generate_text(prompt, 50, 0)
     generated_text = text_summarizer(prompt=prompt)
-    print(prompt, "\n", generated_text)
+    print(prompt, generated_text)
 
 
 if __name__ == "__main__":

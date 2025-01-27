@@ -1,4 +1,5 @@
 beautifulsoup4
+chromadb
 datasets
 faiss-cpu
 langchain
@@ -6,5 +7,7 @@ langchain-community
 langchain-openai
 langgraph
 openai
+sentence-transformers
 torch
+tqdm
 transformers

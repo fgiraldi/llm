@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
 import chromadb
 from chromadb.utils import embedding_functions
 from tqdm import tqdm
@@ -141,3 +141,28 @@ class ReviewVectorDB:
             "name": self.collection.name,
             "metadata": self.collection.metadata
         }
+
+    def get_reviews_by_month(self, year: str, month: str) -> Dict:
+        """
+        Get all reviews for a specific month and year.
+
+        Args:
+            year: Year as string YYYY
+            month: Month as string ('01'-'12')
+
+        Returns:
+            Dictionary containing reviews for the specified month
+        """
+        where = {
+            "$and": [
+                {"year": year},
+                {"month": month}
+            ]
+        }
+
+        return self.collection.query(
+            query_texts=[""],  # Empty query to get all matching documents
+            where=where,
+            include=['documents', 'metadatas'],
+            n_results=1000  # Adjust based on your needs
+        )

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Dict, Optional
+from typing import List, Dict
 import chromadb
 from chromadb.utils import embedding_functions
 from tqdm import tqdm
@@ -69,7 +69,7 @@ class ReviewVectorDB:
             text = review.get('review', '')
             # Parse the date string to ISO format
             date_str = review.get('date')
-            iso_date = self._parse_date(date_str) if date_str else None
+            iso_date = date_str if date_str else None
 
             # Create metadata
             metadata = {
@@ -163,6 +163,6 @@ class ReviewVectorDB:
         return self.collection.query(
             query_texts=[""],  # Empty query to get all matching documents
             where=where,
-            include=['documents', 'metadatas'],
+            include=['documents', 'metadatas', 'distances'],
             n_results=1000  # Adjust based on your needs
         )

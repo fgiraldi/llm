@@ -1,21 +1,63 @@
 import click
 import json
 from datetime import date
-from chromadb_class import ReviewVectorDB
 
+from chromadb_class import ReviewVectorDB
+from data_clustering import analyze_review_trends, ReviewChromaDoc
+from data_visualization import (
+    create_trend_visualizations, save_visualizations, print_cluster_summary, visualize_cluster_sizes
+)
 
 CURRENT_DATE_ISO = date.today().isoformat()
 CURRENT_DATE_YEAR = CURRENT_DATE_ISO[0:4]
 CURRENT_DATE_MONTH = CURRENT_DATE_ISO[5:7]
-print(CURRENT_DATE_ISO)
-print(CURRENT_DATE_YEAR)
-print(CURRENT_DATE_MONTH)
+
 
 # Create a Click group to group commands
 @click.group()
 def cli():
     """Management script for various commands."""
     pass
+
+
+@cli.command()
+def detect_clusters():
+    vector_db = ReviewVectorDB(persist_directory="./chroma_db")
+
+    # Filter docs by one category
+    chroma_docs = vector_db.collection.get(
+        where={
+            "$or": [
+                {"category": "user experience"},
+                {"category": "response time"},
+                {"category": "help desk"},
+                {"category": "integrations"},
+            ]
+        },
+        include=['metadatas', 'documents']
+    )
+    # Create a list of usable data to analize
+    chroma_docs = [
+        ReviewChromaDoc(text, metadata)
+        for text, metadata in zip(chroma_docs['documents'], chroma_docs['metadatas'])
+    ]
+    print(f"Processing {len(chroma_docs)} docs...")
+    results = analyze_review_trends(chroma_docs)
+    # visualization = visualize_trends(results)
+
+    # Example: Print top terms for each cluster
+    for cluster, terms in results['cluster_terms'].items():
+        print(f"\n{cluster}:")
+        print(", ".join(terms))
+
+    # Create and display visualizations
+    figures = create_trend_visualizations(results)
+
+    # Save them as interactive HTML files:
+    save_visualizations(figures)
+
+    print_cluster_summary(results)
+    visualize_cluster_sizes(results)
 
 
 @cli.command()
@@ -44,6 +86,7 @@ def query_similar(query):
         query,
         top_k=3
     )
+    print(results)
 
     # Print results
     for i, (doc, metadata, distance) in enumerate(zip(
@@ -68,6 +111,8 @@ def query_by_month(year, month):
         month=month
     )
 
+    print(results)
+
     # Print results
     print(f"\nDate range query results year {year} month {month}:")
     for i, (doc, metadata, distance) in enumerate(zip(
@@ -79,8 +124,11 @@ def query_by_month(year, month):
         print(f"Distance: {distance}")
         print(f"Review: {doc}")
         print(f"Date: {metadata['date']}")
+        print(f"Year: {metadata['year']}")
+        print(f"Month: {metadata['month']}")
         print(f"Rating: {metadata['rating']}")
 
 
 if __name__ == "__main__":
-    cli()
+    # cli()
+    detect_clusters()

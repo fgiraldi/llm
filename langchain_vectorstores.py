@@ -29,11 +29,17 @@ def main():
     vectorstore = FAISS.from_documents(documents, embeddings)
     query = "What does Kicillof wait for?"
     # Define the prompt for the LLM to generate a search query
-    rephrase_prompt = ChatPromptTemplate.from_messages([
-        MessagesPlaceholder(variable_name="chat_history"),
-        ("user", "{input}"),
-        ("user", "Given the above conversation, generate a search query to look up to get information relevant to the conversation")
-    ])
+    rephrase_prompt = ChatPromptTemplate.from_messages(
+        [
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("user", "{input}"),
+            (
+                "user",
+                """Given the above conversation, generate a search query to look up """
+                """to get information relevant to the conversation"""
+            )
+        ]
+    )
     history_aware_retriever = create_history_aware_retriever(
         llm,
         vectorstore.as_retriever(),

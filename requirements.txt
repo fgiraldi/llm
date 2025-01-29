@@ -8,7 +8,9 @@ langchain-community
 langchain-openai
 langgraph
 openai
+plotly
 sentence-transformers
+spacy
 torch
 tqdm
 transformers

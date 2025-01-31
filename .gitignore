@@ -23,6 +23,7 @@ chroma_db
 # Generated files
 visualizations/
 reviews.json
+*.png
 
 # OS related files
 .DS_Store

@@ -3,7 +3,7 @@ import json
 from datetime import date
 
 from chromadb_class import ReviewVectorDB
-from data_clustering import analyze_review_trends, ReviewChromaDoc
+from data_clustering_raw_data import analyze_review_trends, ReviewChromaDoc
 from data_visualization import (
     create_trend_visualizations, save_visualizations, print_cluster_summary, visualize_cluster_sizes
 )
@@ -18,6 +18,22 @@ CURRENT_DATE_MONTH = CURRENT_DATE_ISO[5:7]
 def cli():
     """Management script for various commands."""
     pass
+
+
+@cli.command()
+def process_reviews_into_vector_db():
+    # Initialize the vector database
+    vector_db = ReviewVectorDB(persist_directory="./chroma_db")
+
+    # Load reviews from JSON file
+    with open('reviews.json', 'r') as f:
+        reviews = json.load(f)
+
+    # Insert reviews
+    vector_db.upsert_reviews(reviews)
+
+    # Print collection stats
+    print("Collection stats:", vector_db.get_stats())
 
 
 @cli.command()
@@ -61,22 +77,6 @@ def detect_clusters():
 
 
 @cli.command()
-def process_reviews_into_vector_db():
-    # Initialize the vector database
-    vector_db = ReviewVectorDB(persist_directory="./chroma_db")
-
-    # Load reviews from JSON file
-    with open('reviews.json', 'r') as f:
-        reviews = json.load(f)
-
-    # Insert reviews
-    vector_db.upsert_reviews(reviews)
-
-    # Print collection stats
-    print("Collection stats:", vector_db.get_stats())
-
-
-@cli.command()
 @click.option("--query", default="Very good app", help="Reviews text to look for similar ones")
 def query_similar(query):
     vector_db = ReviewVectorDB(persist_directory="./chroma_db")
@@ -89,46 +89,47 @@ def query_similar(query):
     print(results)
 
     # Print results
-    for i, (doc, metadata, distance) in enumerate(zip(
+    for i, (doc, metadata, distance, embedding) in enumerate(zip(
         results['documents'][0],
         results['metadatas'][0],
-        results['distances'][0]
+        results['distances'][0],
+        results['embeddings'][0]
     )):
         print(f"\nMatch {i+1}")
         print(f"Distance: {distance}")
         print(f"Review: {doc}")
         print(f"Metadata: {metadata}")
+        print(f"Embeddings: {embedding}")
 
 
-@cli.command()
-@click.option("--year", default=CURRENT_DATE_YEAR, help="Year")
-@click.option("--month", default=CURRENT_DATE_MONTH, help="Month")
-def query_by_month(year, month):
-    vector_db = ReviewVectorDB(persist_directory="./chroma_db")
+# @cli.command()
+# @click.option("--year", default=CURRENT_DATE_YEAR, help="Year")
+# @click.option("--month", default=CURRENT_DATE_MONTH, help="Month")
+# def query_by_month(year, month):
+#     vector_db = ReviewVectorDB(persist_directory="./chroma_db")
 
-    results = vector_db.get_reviews_by_month(
-        year=year,
-        month=month
-    )
+#     results = vector_db.get_reviews_by_month(
+#         year=year,
+#         month=month
+#     )
 
-    print(results)
+#     print(results)
 
-    # Print results
-    print(f"\nDate range query results year {year} month {month}:")
-    for i, (doc, metadata, distance) in enumerate(zip(
-        results['documents'][0],
-        results['metadatas'][0],
-        results['distances'][0]
-    )):
-        print(f"\nMatch {i+1}")
-        print(f"Distance: {distance}")
-        print(f"Review: {doc}")
-        print(f"Date: {metadata['date']}")
-        print(f"Year: {metadata['year']}")
-        print(f"Month: {metadata['month']}")
-        print(f"Rating: {metadata['rating']}")
+#     # Print results
+#     print(f"\nDate range query results year {year} month {month}:")
+#     for i, (doc, metadata, distance) in enumerate(zip(
+#         results['documents'][0],
+#         results['metadatas'][0],
+#         results['distances'][0]
+#     )):
+#         print(f"\nMatch {i+1}")
+#         print(f"Distance: {distance}")
+#         print(f"Review: {doc}")
+#         print(f"Date: {metadata['date']}")
+#         print(f"Year: {metadata['year']}")
+#         print(f"Month: {metadata['month']}")
+#         print(f"Rating: {metadata['rating']}")
 
 
 if __name__ == "__main__":
-    # cli()
-    detect_clusters()
+    cli()

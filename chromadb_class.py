@@ -124,7 +124,7 @@ class ReviewVectorDB:
         results = self.collection.query(
             query_texts=[query_text],
             n_results=top_k,
-            include=['documents', 'metadatas', 'distances']
+            include=['documents', 'metadatas', 'distances', 'embeddings']
         )
 
         return results

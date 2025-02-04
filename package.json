@@ -1,0 +1,10 @@
+{
+  "type": "module",
+  "dependencies": {
+    "chromadb": "^1.10.4",
+    "ml-kmeans": "^6.0.0",
+    "natural": "^8.0.1",
+    "openai": "^4.82.0",
+    "stopword": "^3.1.4"
+  }
+}

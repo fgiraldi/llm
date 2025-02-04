@@ -27,3 +27,9 @@ reviews.json
 
 # OS related files
 .DS_Store
+
+# Node modules
+node_modules/
+
+# Logs in general
+*.log

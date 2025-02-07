@@ -1,3 +1,4 @@
+import json
 import numpy as np
 import pandas as pd
 import time
@@ -6,23 +7,58 @@ from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
 import seaborn as sns
-from chromadb_class import ReviewVectorDB
 
 
-# Connect to ChromaDB
 start_time = time.time()
-chroma_client = ReviewVectorDB(persist_directory="./chroma_db")
-collection = chroma_client.client.get_collection(name="app_reviews")  # Update with your collection name
 
-# Retrieve all stored embeddings and metadata
-results = collection.get(include=["documents", "embeddings", "metadatas"])
-# Extract embeddings and corresponding reviews
-embeddings = np.array(results["embeddings"])  # Shape: (num_reviews, embedding_dim)
-reviews = [document for document in results["documents"]]
+# Load JSON data
+with open("json_files/records1.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews = [item["review"] for item in data]
+embeddings = [item["embeddings"] for item in data]  # Shape: (num_reviews, embedding_dim)
+
+with open("json_files/records2.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews.extend([item["review"] for item in data])
+embeddings.extend([item["embeddings"] for item in data])  # Shape: (num_reviews, embedding_dim)
+
+with open("json_files/records3.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews.extend([item["review"] for item in data])
+embeddings.extend([item["embeddings"] for item in data])  # Shape: (num_reviews, embedding_dim)
+
+with open("json_files/records4.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews.extend([item["review"] for item in data])
+embeddings.extend([item["embeddings"] for item in data])  # Shape: (num_reviews, embedding_dim)
+
+with open("json_files/records5.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews.extend([item["review"] for item in data])
+embeddings.extend([item["embeddings"] for item in data])  # Shape: (num_reviews, embedding_dim)
+
+with open("json_files/records6.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# Extract 'review' texts and 'embeddings'
+reviews.extend([item["review"] for item in data])
+embeddings.extend([item["embeddings"] for item in data])  # Shape: (num_reviews, embedding_dim)
+data = None
+embeddings = np.array(embeddings)  # Shape: (num_reviews, embedding_dim)
 
 end_time = time.time()
 elapsed_time = end_time - start_time
-print(f"It took {elapsed_time} seconds to load {len(embeddings)} items from a ChromaDB")
+print(f"It took {elapsed_time} seconds to load {len(embeddings)} items from JSON files")
 
 
 # Determine optimal clusters using Elbow method (optional)

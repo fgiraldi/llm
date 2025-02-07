@@ -19,7 +19,7 @@ serializable_data = [
 
 try:
     with open(output_file, "w", encoding="utf-8") as file:
-        json.dump(serializable_data[0:10000], file, ensure_ascii=False, indent=4)
+        json.dump(serializable_data, file, ensure_ascii=False, indent=4)
     print(f"Data successfully saved to {output_file}")
 except Exception as e:
     print(f"An error occurred: {e}")

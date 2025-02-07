@@ -17,7 +17,7 @@ embeddings = np.array(results["embeddings"])  # Shape: (num_reviews, embedding_d
 reviews = [document for document in results["documents"]]
 
 # Apply DBSCAN Clustering
-dbscan = DBSCAN(eps=0.5, min_samples=5, metric="cosine")  # Adjust parameters as needed
+dbscan = DBSCAN(eps=0.4, min_samples=5, metric="cosine")  # Adjust parameters as needed
 clusters = dbscan.fit_predict(embeddings)
 
 # Reduce dimensions for visualization (PCA)

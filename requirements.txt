@@ -13,7 +13,7 @@ pandas
 plotly
 seaborn
 sentence-transformers
-sklearn
+scikit-learn
 spacy
 textblob
 torch

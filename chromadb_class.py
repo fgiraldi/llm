@@ -69,15 +69,15 @@ class ReviewVectorDB:
             text = review.get('review', '')
             # Parse the date string to ISO format
             date_str = review.get('date')
-            iso_date = date_str if date_str else None
+            iso_date = date_str if date_str else '2025-01-01'
 
             # Create metadata
             metadata = {
-                'rating': str(review.get('star')),  # Chroma requires metadata values to be strings
+                'rating': str(review.get('star', '')),  # Chroma requires metadata values to be strings
                 'date': iso_date,  # Store as ISO format string
                 'year': str(datetime.strptime(iso_date, "%Y-%m-%d").year) if iso_date else None,
                 'month': str(datetime.strptime(iso_date, "%Y-%m-%d").month) if iso_date else None,
-                'category': review.get('category'),
+                'category': review.get('category', ''),
                 # Add any other metadata fields you want to store
             }
 

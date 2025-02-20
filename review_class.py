@@ -31,11 +31,11 @@ class Review:
             print(f"Warning: Could not parse date '{date_str}': {e}")
             return None
 
-    def to_dict(self):
+    def to_dict(self, format_date: bool = True):
         """Convert the object to a serializable dictionary."""
         return {
             "category": self.category,
             "review": self.review,
-            "date": self._parse_date(self.date),
+            "date": self._parse_date(self.date) if format_date else self.date,
             "star": self.star
         }

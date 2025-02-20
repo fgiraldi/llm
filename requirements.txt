@@ -9,10 +9,13 @@ langchain-openai
 langgraph
 matplotlib
 openai
+pandas
 plotly
 seaborn
 sentence-transformers
+sklearn
 spacy
+textblob
 torch
 tqdm
 transformers

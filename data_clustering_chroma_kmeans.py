@@ -37,11 +37,12 @@ def find_optimal_clusters(embeddings, max_k=10):
     plt.xlabel("Number of Clusters")
     plt.ylabel("Inertia")
     plt.title("Elbow Method for Optimal K")
-    plt.show()
+    plt.savefig('elbow_method.png')
+    # plt.show()
 
 
 # Uncomment to run Elbow Method
-# find_optimal_clusters(embeddings)
+find_optimal_clusters(embeddings)
 
 # Apply K-Means Clustering
 start_time = time.time()

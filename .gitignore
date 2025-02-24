@@ -23,6 +23,7 @@ chroma_db
 # Generated files
 visualizations/
 reviews.json
+reviews_with_embeddings.json
 *.png
 
 # OS related files

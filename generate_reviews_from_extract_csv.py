@@ -1,12 +1,16 @@
+import config
 import csv
 from datetime import datetime
 import json
+from langchain_openai import OpenAIEmbeddings
 
 from review_class import Review
 
 
 file_path = "dashboard_export_2025_01_14.csv"
 output_file = "reviews.json"
+api_key = config.api_key
+openai_embedding_fn = OpenAIEmbeddings(openai_api_key=api_key)
 
 
 def parse_date(date_str: str) -> str:
@@ -43,6 +47,9 @@ with open(file_path, newline='', encoding='utf-8') as csvfile:
     ]
 
 print(f"Processing {len(serializable_data)} items")
+
+embeddings = openai_embedding_fn.embed_documents([review["review"] for review in serializable_data])
+serializable_data = list(map(lambda x, y: {**x, "embedding": y}, serializable_data, embeddings))
 
 try:
     with open(output_file, "w", encoding="utf-8") as file:

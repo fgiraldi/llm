@@ -15,7 +15,7 @@ from langchain.prompts import ChatPromptTemplate
 # Connect to ChromaDB
 start_time = time.time()
 
-json_path = "reviews_with_embeddings.json"
+json_path = "reviews.json"
 
 # Retrieve all stored embeddings and metadata
 # 1. Load your JSON file with documents and embeddings
@@ -39,7 +39,7 @@ for item in data:
     # Extract metadata if available
     metadata = {
         "category": item.get("category", ""),
-        "date": item.get("date", ""),
+        # "date": item.get("date", ""),
     }
 
     documents.append(doc_text)
@@ -57,7 +57,8 @@ openai_embedding_fn = OpenAIEmbeddings(openai_api_key=api_key)
 def main():
     llm = ChatOpenAI(
         api_key=api_key,
-        model="gpt-3.5-turbo",
+        # model="gpt-3.5-turbo",
+        model="chatgpt-4o-latest",
         temperature=0
     )
     # Use the retrieved embeddings to build the FAISS vectorstore
@@ -67,7 +68,7 @@ def main():
         embedding=openai_embedding_fn,
         metadatas=metadatas if metadatas and all(metadatas) else None
     )
-    query = "What do users complain the most about the app? If possibe, explain about the 2 top most common issues."
+    query = "What do users complain the most about the app? I want you to extract at most 10 of the most frequent and relevant topics."
     # Define the prompt for the LLM to generate a search query
     rephrase_prompt = ChatPromptTemplate.from_messages(
         [

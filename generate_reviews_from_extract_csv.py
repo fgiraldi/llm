@@ -40,7 +40,8 @@ with open(file_path, newline='', encoding='utf-8') as csvfile:
         Review(
             review["Review"],
             parse_date(review["Response Date"]),
-            ""
+            "",
+            review["Ease"]
         ).to_dict(format_date=False)
         for review in reader
         if review["Review"] != "" and len(review["Review"]) > 7

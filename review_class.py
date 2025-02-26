@@ -8,11 +8,11 @@ class Review:
     _categories = ['user experience', 'response time', 'help desk', 'accessibility', 'recommendations', 'integrations']
     embedding: List[float] = None
 
-    def __init__(self, review, date, star, embedding=None):
+    def __init__(self, review, date, category, embedding=None):
         self.category = random.choice(self._categories)
         self.review = review
+        self.category = category
         self.date = date  # Assume this is a datetime object
-        self.star = star
         self.embedding = embedding if embedding else []
 
     def _parse_date(self, date_str: str) -> str:
@@ -39,7 +39,5 @@ class Review:
         return {
             "category": self.category,
             "review": self.review,
-            "date": self._parse_date(self.date) if format_date else self.date,
-            "star": self.star,
             "embedding": self.embedding if self.embedding else []
         }

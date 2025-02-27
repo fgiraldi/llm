@@ -53,6 +53,7 @@ def is_review_negative(vader_label: str, cardiff_label: str, nlptown_label: str)
     return any(label == "negative" for label in [vader_label, cardiff_label, nlptown_label])
 
 
+# Purge file
 data = pd.read_csv(file_path)
 # Drop rows where 'Review' field is empty or has less than 7 characters
 data = data.dropna(subset=['Review'])
@@ -62,20 +63,33 @@ data = data[~data['Ease'].str.match('Very easy')]
 data['review_clean_text'] = data['Review'].apply(lambda x: re.sub(r'[^\w\s]', '', str(x)).lower())
 print(f"Processing {len(data)} items")
 
+# Generate vader sentiment labels
 vader_sentiment = SentimentIntensityAnalyzer()
 data['vader_score'] = data['review_clean_text'].apply(lambda x: vader_sentiment.polarity_scores(x)['compound'])
-# Create labels
+# Create labels for vader sentiment
 bins = [-1, -0.1, 0.1, 1]
 names = ['negative', 'neutral', 'positive']
 data['vader_label'] = pd.cut(data['vader_score'], bins, labels=names)
+# Remove vader_score column
+data = data.drop(columns=['vader_score'])
 
-# Calculate sentiment labels using transformer models
+# Calculate cardiff sentiment labels
 transformer_pipeline_cardiff = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
-transformer_pipeline_nlptown = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-data['cardiff_label'] = data['review_clean_text'].apply(lambda x: transformer_pipeline_cardiff(x)[0]['label'])
-data['nlptown_label'] = data['review_clean_text'].apply(lambda x: 'negative' if transformer_pipeline_nlptown(x)[0]['label'] in ['1 star', '2 stars'] else 'positive')
+data['cardiff_label'] = data['review_clean_text'].apply(
+    lambda x: transformer_pipeline_cardiff(x)[0]['label']
+)
 
-data['is_negative'] = data.apply(lambda x: is_review_negative(x['vader_label'], x['cardiff_label'], x['nlptown_label']), axis=1)
+# Calculate mlptown sentiment labels
+transformer_pipeline_nlptown = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+data['nlptown_label'] = data['review_clean_text'].apply(
+    lambda x: 'negative' if transformer_pipeline_nlptown(x)[0]['label'] in ['1 star', '2 stars'] else 'positive'
+)
+
+# Calculate final negative labels
+data['is_negative'] = data.apply(
+    lambda x: is_review_negative(x['vader_label'], x['cardiff_label'], x['nlptown_label']), axis=1
+)
+
 print(data[['Review', 'vader_label', 'cardiff_label', 'nlptown_label', 'is_negative']].head(25))
 print(f"Number of negative reviews: {data['is_negative'].sum()}")
 
@@ -96,6 +110,7 @@ serializable_data = [
     for index, review in data.iterrows()
 ]
 
+# Embed documents
 embeddings = openai_embedding_fn.embed_documents([review["review"] for review in serializable_data])
 serializable_data = list(map(lambda x, y: {**x, "embedding": y}, serializable_data, embeddings))
 

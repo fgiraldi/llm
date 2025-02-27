@@ -9,12 +9,9 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-# from chromadb_class import ReviewVectorDB
 
 
-# Connect to ChromaDB
 start_time = time.time()
-
 json_path = "reviews.json"
 
 # Retrieve all stored embeddings and metadata
@@ -68,7 +65,8 @@ def main():
         embedding=openai_embedding_fn,
         metadatas=metadatas if metadatas and all(metadatas) else None
     )
-    query = "What do users complain the most about the app? I want you to extract at most 10 of the most frequent and relevant topics."
+    query = """What do users complain the most about the app?""" \
+        """I want you to extract at most 10 of the most frequent and relevant topics."""
     # Define the prompt for the LLM to generate a search query
     rephrase_prompt = ChatPromptTemplate.from_messages(
         [
